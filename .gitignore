@@ -1,0 +1,4 @@
+#.gitignore
+
+#enviroment
+.env
