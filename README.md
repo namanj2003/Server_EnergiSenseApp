@@ -5,6 +5,6 @@
 INSTRUCTIONS
 Create a .env file.
 Inside the file, you can save your MongoDB connection string in the format: -
-mongo_URL="your connection string here"
+mongo_URL="your connection string here"\n
 To generate JsonWebTokens for every successful connection, give secret token in the .env file with the format: -
 jwt_secret="your secret token here"
