@@ -11,7 +11,7 @@ const bcrpt = require('bcrypt');
 
 router.post('/signup', async(req, res) => {
     // res.send('This is signup page');
-    console.log('Sent by Client - ', req.body);
+    // console.log('Sent by Client - ', req.body);
     const { name, email, deviceID, password } = req.body;
     if (!email || !password || !name || !deviceID) {
         return res.status(422).json({ error: "Please add all the fields" });
@@ -20,7 +20,7 @@ router.post('/signup', async(req, res) => {
     .then(
         async (savedUser) => {
             if (savedUser) {
-                return res.status(422).json({ error: "Invalid Credentials" });
+                return res.status(422).json({ error: "Email or Device ID already sed" });
             }
             const user = new User({
                 name,

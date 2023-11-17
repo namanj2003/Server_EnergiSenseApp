@@ -22,12 +22,12 @@ const userSchema = mongoose.Schema({
 });
 userSchema.pre('save', async function(next) {
     const user = this;
-    console.log("Just before saving & before hashing", user.password);
+    // console.log("Just before saving & before hashing", user.password);
     if(!user.isModified('password')) {
         return next();
     }
     user.password = await bcrypt.hash(user.password, 12);
-    console.log("Just before saving & after hashing", user.password);
+    // console.log("Just before saving & after hashing", user.password);
     next();
 })
 
