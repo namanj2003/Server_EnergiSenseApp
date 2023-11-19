@@ -8,7 +8,7 @@ const nodemailer = require("nodemailer");
 //
 require("dotenv").config();
 //
-const bcrpt = require("bcrypt");
+const bcrypt = require("bcrypt");
 //
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -41,7 +41,27 @@ var currentdate = new Date();
 }
 
 mailer().catch(console.error);
+//
 
+async function forget(receiverEmail, code) {
+  // send mail with defined transport object
+  if (!receiverEmail) {
+    console.error("No receiver email defined");
+    return;
+  }
+  let info = await transporter.sendMail({
+    from: '"EnergiSense Support" <energisenseapp@gmail.com>', // sender address
+    to: `${receiverEmail}`, // list of receivers
+    subject: "Reset Password", // Subject line
+    text: `Use the following verification code to reset your password\n ${code}`, // plain text body
+    html: `<b>Use the following verification code to reset your password\n ${code}</b>`, // html body
+  });
+var currentdate = new Date();
+  console.log("Message sent: %s", info.messageId);
+  console.log("Time: %s", currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds());
+}
+
+forget().catch(console.error);
 //
 router.post("/signup", async (req, res) => {
   // res.send('This is signup page');
@@ -88,7 +108,6 @@ router.post("/verify", async (req, res) => {
     });
   
 });
-
 //
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -101,7 +120,7 @@ router.post("/login", async (req, res) => {
     return res.status(422).json({ error: "User Not Found" });
   }
   try {
-    bcrpt.compare(password, savedUser.password, (err, result) => {
+    bcrypt.compare(password, savedUser.password, (err, result) => {
       if (result) {
         // console.log("Password matched");
         const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
@@ -115,5 +134,50 @@ router.post("/login", async (req, res) => {
     console.log(err);
   }
 });
+//
+router.post("/forgot-password-check", async (req, res) => {
+  const {email} = req.body;
+  if (!email) {
+    return res.status(422).json({ error: "Please add email" });
+  }
+  User.findOne({ email: email }).then(async (savedUser) => {
+    if (!savedUser) {
+      return res.status(422).json({ error: "User Not Found" });
+    }
+    try {
+      let VerificationCode = Math.floor(100000 + Math.random() * 900000);
+      let user = {
+          email,VerificationCode
+      }
+      await forget(email, VerificationCode);
+      res.send({message: "Verification Code sent to your email to reset your password",resetData:user });
+    }
+    catch(err){
+      console.log(err);
+    }
+  });
 
+  router.post("/forgot-password-change", async (req, res) => {
+    const {email, password} = req.body;
+    if (!password) {
+      return res.status(422).json({ error: "Please add password" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 12);
+    User.updateOne({ email: email }, { $set: { password: hashedPassword } }).then(async (result) => {
+      console.log(result);  // Added console log for debugging
+      if (result?.modifiedCount > 0) {
+        try {
+          const user = await User.findOne({ email: email });
+          const token = jwt.sign({ _id: user._id }, process.env.jwt_secret);
+          console.log("Password changed successfully");
+          console.log({ token });
+          res.send({message: "Password changed successfully", token: token});
+        }
+        catch(err){
+          console.log(err);
+        }
+      }
+    });
+  });
+});
 module.exports = router;
