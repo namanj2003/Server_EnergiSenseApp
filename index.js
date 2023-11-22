@@ -1,6 +1,6 @@
 const express = require('express');
 // const os = require('os');
-const port = 5000;
+const port = parseInt(process.env.PORT, 10) || 5000;
 // const appip =os.networkInterfaces().en0[2].address;
 // const appaddress = `http://${appip}:${port}+'/'`;
 
