@@ -22,6 +22,6 @@ app.get('/',requireToken, (req, res) => {
     res.send(req.user);
 });
 
-app.listen(port,'192.168.29.220', () => {
+app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
