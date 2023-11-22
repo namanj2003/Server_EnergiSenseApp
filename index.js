@@ -1,5 +1,9 @@
 const express = require('express');
+// const os = require('os');
 const port = 5000;
+// const appip =os.networkInterfaces().en0[2].address;
+// const appaddress = `http://${appip}:${port}+'/'`;
+
 const app = express();
 const bodyParser = require('body-parser');
 //
@@ -18,6 +22,6 @@ app.get('/',requireToken, (req, res) => {
     res.send(req.user);
 });
 
-app.listen(port, () => {
+app.listen(port,'192.168.29.220', () => {
     console.log(`Server is running on port ${port}`);
 });
