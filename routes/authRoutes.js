@@ -110,7 +110,7 @@ router.post("/verify", async (req, res) => {
 });
 //
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, deviceID } = req.body;
   if (!email || !password) {
     return res.status(422).json({ error: "Please add email or password" });
   }
@@ -122,11 +122,15 @@ router.post("/login", async (req, res) => {
   try {
     bcrypt.compare(password, savedUser.password, (err, result) => {
       if (result) {
+        let id = {deviceID};
+
         // console.log("Password matched");
         const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
-        res.send({ token });
+        res.send({ token, apikey:id });
+
       } else {
         // console.log("Password not matched");
+        res.send
         return res.status(422).json({ error: "Invalid Credentials" });
       }
     });
@@ -164,7 +168,7 @@ router.post("/forgot-password-check", async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 12);
     User.updateOne({ email: email }, { $set: { password: hashedPassword } }).then(async (result) => {
-      console.log(result);  // Added console log for debugging
+      // console.log(result);
       if (result?.modifiedCount > 0) {
         try {
           const user = await User.findOne({ email: email });
