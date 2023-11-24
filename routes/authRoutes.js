@@ -110,7 +110,7 @@ router.post("/verify", async (req, res) => {
 });
 //
 router.post("/login", async (req, res) => {
-  const { email, password, deviceID } = req.body;
+  const { email, password } = req.body;
   if (!email || !password) {
     return res.status(422).json({ error: "Please add email or password" });
   }
@@ -122,15 +122,14 @@ router.post("/login", async (req, res) => {
   try {
     bcrypt.compare(password, savedUser.password, (err, result) => {
       if (result) {
-        let id = {deviceID};
+        let id = savedUser.deviceID;
 
         // console.log("Password matched");
         const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
-        res.send({ token, apikey:id });
+        res.send({ token, apikey: id });
 
       } else {
         // console.log("Password not matched");
-        res.send
         return res.status(422).json({ error: "Invalid Credentials" });
       }
     });
