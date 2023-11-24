@@ -111,10 +111,11 @@ router.post("/verify", async (req, res) => {
 //
 router.post("/login", async (req, res) => {
   const { email, password, deviceID } = req.body;
-  User.findOne({ $or: [{ email: email }, { deviceID: deviceID }] }).then(async (savedUser) => {
   if (!email || !password) {
     return res.status(422).json({ error: "Please add email or password" });
   }
+  const savedUser = await User.findOne({ email: email });
+
   if (!savedUser) {
     return res.status(422).json({ error: "User Not Found" });
   }
@@ -127,7 +128,6 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
         res.send({ token, apikey:id });
 
-
       } else {
         // console.log("Password not matched");
         res.send
@@ -137,7 +137,6 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
-});
 });
 //
 router.post("/forgot-password-check", async (req, res) => {
