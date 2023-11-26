@@ -32,8 +32,8 @@ async function mailer(receiverEmail, code) {
     from: '"EnergiSense Support" <energisenseapp@gmail.com>', // sender address
     to: `${receiverEmail}`, // list of receivers
     subject: "Signup Verification", // Subject line
-    text: `Your Verification Code is ${code}`, // plain text body
-    html: `<b>Your Verification Code is ${code}</b>`, // html body
+    text: `Your Verification Code is\n\n ${code}`, // plain text body
+    html: `<b>Your Verification Code is<br><br>${code}</b>`, // html body
   });
 var currentdate = new Date();
   console.log("Message sent: %s", info.messageId);
@@ -53,8 +53,8 @@ async function forget(receiverEmail, code) {
     from: '"EnergiSense Support" <energisenseapp@gmail.com>', // sender address
     to: `${receiverEmail}`, // list of receivers
     subject: "Reset Password", // Subject line
-    text: `Use the following verification code to reset your password\n ${code}`, // plain text body
-    html: `<b>Use the following verification code to reset your password\n ${code}</b>`, // html body
+    text: `Use the following verification code to reset your password\n\n ${code}`, // plain text body
+    html: `<b>Use the following verification code to reset your password<br><br>${code}</b>`, // html body
   });
 var currentdate = new Date();
   console.log("Message sent: %s", info.messageId);
