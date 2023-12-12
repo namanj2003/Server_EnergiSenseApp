@@ -124,7 +124,7 @@ router.post("/login", async (req, res) => {
       if (result) {
         let id = savedUser.deviceID;
         let email = savedUser.email;
-        let name = savedUser.name
+        let name = savedUser.name;
 
         // console.log("Password matched");
         const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
