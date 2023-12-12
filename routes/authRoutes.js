@@ -122,14 +122,16 @@ router.post("/login", async (req, res) => {
   try {
     bcrypt.compare(password, savedUser.password, (err, result) => {
       if (result) {
-        let id = savedUser.deviceID;
-        let email = savedUser.email;
-        let name = savedUser.name;
+       let userData = {
+          email: savedUser.email,
+          name: savedUser.name,
+          deviceID: savedUser.deviceID,
+        };
         
 
         // console.log("Password matched");
         const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
-        res.send({ token, apikey: id,email,name });
+        res.send({ token, apikey: userData});
 
       } else {
         // console.log("Password not matched");
