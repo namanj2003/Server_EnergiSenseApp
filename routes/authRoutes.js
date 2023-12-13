@@ -187,5 +187,27 @@ router.post("/forgot-password-check", async (req, res) => {
       }
     });
   });
+
+  router.post("/save-profile", async (req, res) => {
+    const { email, name } = req.body;
+    if (!email || !name) {
+      return res.status(422).json({ error: "Please add all the fields" });
+    }
+    try {
+      const existingUser = await User.findOne({ email: email });
+      if (existingUser) {
+        return res.status(422).json({ error: "Email already exists" });
+      }
+      const savedUser = await User.findOneAndUpdate(
+        { email: email },
+        { name: name },
+        { new: true, upsert: true }
+      );
+      const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
+      res.send({ message: "Profile saved successfully", token: token });
+    } catch (err) {
+      console.log(err);
+    }
+  });
 });
 module.exports = router;
