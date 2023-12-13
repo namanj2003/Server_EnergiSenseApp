@@ -189,22 +189,22 @@ router.post("/forgot-password-check", async (req, res) => {
   });
 
   router.post("/save-profile", async (req, res) => {
-    const { email, name } = req.body;
-    if (!email || !name) {
+    const { email, name, deviceID } = req.body;
+    if (!email || !name || !deviceID) {
       return res.status(422).json({ error: "Please add all the fields" });
     }
     try {
-      const existingUser = await User.findOne({ email: email });
+      let existingUser = await User.findOne({ deviceID: deviceID });
       if (existingUser) {
-        return res.status(422).json({ error: "Email already exists" });
+        existingUser.email = email;
+        existingUser.name = name;
+      } else {
+        return res.status(404).json({ error: "No user found with the provided device ID" });
       }
-      const savedUser = await User.findOneAndUpdate(
-        { email: email },
-        { name: name },
-        { new: true, upsert: true }
-      );
-      const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
-      res.send({ message: "Profile saved successfully", token: token });
+      await existingUser.save();
+      const token = jwt.sign({ _id: existingUser._id }, process.env.jwt_secret);
+      const message = "Profile updated successfully";
+      res.send({ message, token: token });
     } catch (err) {
       console.log(err);
     }
