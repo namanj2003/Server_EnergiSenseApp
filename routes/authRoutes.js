@@ -188,26 +188,30 @@ router.post("/forgot-password-check", async (req, res) => {
     });
   });
 
-  router.post("/save-profile", async (req, res) => {
-    const { email, name, deviceID } = req.body;
-    if (!email || !name || !deviceID) {
-      return res.status(422).json({ error: "Please add all the fields" });
-    }
-    try {
-      let existingUser = await User.findOne({ deviceID: deviceID });
-      if (existingUser) {
-        existingUser.email = email;
+router.post("/save-profile", async (req, res) => {
+  const { email, name, deviceID } = req.body;
+  if (!email || !name || !deviceID) {
+    return res.status(422).json({ error: "Please add all the fields" });
+  }
+  try {
+    let existingUser = await User.findOne({ deviceID: deviceID });
+    if (existingUser) {
+      if (existingUser.email === email) {
         existingUser.name = name;
       } else {
-        return res.status(404).json({ error: "No user found with the provided device ID" });
+        existingUser.email = email;
+        existingUser.name = name;
       }
-      await existingUser.save();
-      const token = jwt.sign({ _id: existingUser._id }, process.env.jwt_secret);
-      const message = "Profile updated successfully";
-      res.send({ message, token: token });
-    } catch (err) {
-      console.log(err);
+    } else {
+      return res.status(404).json({ error: "No user found with the provided device ID" });
     }
-  });
+    await existingUser.save();
+    const token = jwt.sign({ _id: existingUser._id }, process.env.jwt_secret);
+    const message = "Profile updated successfully";
+    res.send({ message, token: token });
+  } catch (err) {
+    console.log(err);
+  }
+});
 });
 module.exports = router;
