@@ -230,6 +230,10 @@ router.post("/forgot-password-check", async (req, res) => {
       console.log(err);
     }
   });
+
+  router.post("/*", async (req, res) => {
+    res.send("Error 404 Page Not Found");
+  });
   
     
 module.exports = router;
