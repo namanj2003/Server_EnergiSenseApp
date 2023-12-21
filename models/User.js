@@ -30,7 +30,4 @@ userSchema.pre('save', async function(next) {
     // console.log("Just before saving & after hashing", user.password);
     next();
 })
-
-
-
 mongoose.model('User', userSchema);

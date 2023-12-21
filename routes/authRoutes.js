@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
+const DeviceData = mongoose.model("DeviceData");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
@@ -214,4 +215,21 @@ router.post("/forgot-password-check", async (req, res) => {
       console.log(err);
     }
   });
+
+  router.post("/historydata-send", async (req, res) => {
+    const {v0,v1,v2,v3,v4,timeStamp} = req.body;
+    if (!v0 || !v1 || !v2 || !v3 || !v4 || !timeStamp) {
+      return res.status(422).json({ error: "Some Data Missing" });
+    }
+    try {
+      const deviceData = new DeviceData({v0,v1,v2,v3,v4,timeStamp});
+      await deviceData.save();
+      const message = "Data saved successfully";
+      res.send({ message });
+    } catch (err) {
+      console.log(err);
+    }
+  });
+  
+    
 module.exports = router;
