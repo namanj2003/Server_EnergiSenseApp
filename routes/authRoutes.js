@@ -217,7 +217,7 @@ router.post("/forgot-password-check", async (req, res) => {
   });
 
   router.post("/historydata-send", async (req, res) => {
-    const {v0,v1,v2,v3,v4,timeStamp} = req.body;
+    const {v0,v1,v2,v3,v4,timeStamp,deviceID} = req.body;
     if (!v0 || !v1 || !v2 || !v3 || !v4 || !timeStamp || !deviceID) {
       return res.status(422).json({ error: "Some Data Missing" });
     }
