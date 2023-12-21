@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
 const deviceData = mongoose.Schema({
-    timeStamp: {
-        type: String,
-        required: true,
-    },
     v0: {
         type: String,
         required: true,
@@ -23,11 +19,19 @@ const deviceData = mongoose.Schema({
     v4: {
         type: String,
         required: true,
-    }
+    }, 
+    timeStamp: {
+        type: String,
+        required: true,
+    },
+    deviceID: {
+        type: String,
+        required: true,
+    },
 
 
 });
-deviceData.pre('save', async function(next) {
+deviceData.pre('save', async function (next) {
     next();
 })
 mongoose.model('DeviceData ', deviceData);

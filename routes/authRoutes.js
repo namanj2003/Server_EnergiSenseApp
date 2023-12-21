@@ -218,11 +218,11 @@ router.post("/forgot-password-check", async (req, res) => {
 
   router.post("/historydata-send", async (req, res) => {
     const {v0,v1,v2,v3,v4,timeStamp} = req.body;
-    if (!v0 || !v1 || !v2 || !v3 || !v4 || !timeStamp) {
+    if (!v0 || !v1 || !v2 || !v3 || !v4 || !timeStamp || !deviceID) {
       return res.status(422).json({ error: "Some Data Missing" });
     }
     try {
-      const deviceData = new DeviceData({v0,v1,v2,v3,v4,timeStamp});
+      const deviceData = new DeviceData({v0,v1,v2,v3,v4,timeStamp,deviceID});
       await deviceData.save();
       const message = "Data saved successfully";
       res.send({ message });
