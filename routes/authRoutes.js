@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
-const DeviceData = mongoose.model("DeviceData");
+const DeviceData = mongoose.model("DeviceData ");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
