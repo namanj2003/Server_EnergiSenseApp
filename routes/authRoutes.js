@@ -167,83 +167,83 @@ router.post("/forgot-password-check", async (req, res) => {
   });
 });
 //
-  router.post("/forgot-password-change", async (req, res) => {
-    const { email, password } = req.body;
-    if (!password) {
-      return res.status(422).json({ error: "Please add password" });
-    }
-    const hashedPassword = await bcrypt.hash(password, 12);
-    User.updateOne({ email: email }, { $set: { password: hashedPassword } }).then(async (result) => {
-      // console.log(result);
-      if (result?.modifiedCount > 0) {
-        try {
-          const user = await User.findOne({ email: email });
-          const token = jwt.sign({ _id: user._id }, process.env.jwt_secret);
-          console.log("Password changed successfully");
-          console.log({ token });
-          res.send({ message: "Password changed successfully", token: token });
-        }
-        catch (err) {
-          console.log(err);
-        }
+router.post("/forgot-password-change", async (req, res) => {
+  const { email, password } = req.body;
+  if (!password) {
+    return res.status(422).json({ error: "Please add password" });
+  }
+  const hashedPassword = await bcrypt.hash(password, 12);
+  User.updateOne({ email: email }, { $set: { password: hashedPassword } }).then(async (result) => {
+    // console.log(result);
+    if (result?.modifiedCount > 0) {
+      try {
+        const user = await User.findOne({ email: email });
+        const token = jwt.sign({ _id: user._id }, process.env.jwt_secret);
+        console.log("Password changed successfully");
+        console.log({ token });
+        res.send({ message: "Password changed successfully", token: token });
       }
-    });
-  });
-//
-  router.post("/save-profile", async (req, res) => {
-    const { name, email, deviceID } = req.body;
-    if (!email || !name || !deviceID) {
-      return res.status(422).json({ error: "Please add all the fields" });
+      catch (err) {
+        console.log(err);
+      }
     }
-    try {
-      let existingUser = await User.findOne({ deviceID: deviceID });
-      if (existingUser) {
-        if (existingUser.email === email) {
-          existingUser.name = name;
-        } else {
-          existingUser.email = email;
-          existingUser.name = name;
-        }
+  });
+});
+//
+router.post("/save-profile", async (req, res) => {
+  const { name, email, deviceID } = req.body;
+  if (!email || !name || !deviceID) {
+    return res.status(422).json({ error: "Please add all the fields" });
+  }
+  try {
+    let existingUser = await User.findOne({ deviceID: deviceID });
+    if (existingUser) {
+      if (existingUser.email === email) {
+        existingUser.name = name;
       } else {
-        return res.status(404).json({ error: "No user found with the provided device ID" });
+        existingUser.email = email;
+        existingUser.name = name;
       }
-      await existingUser.save();
-      const token = jwt.sign({ _id: existingUser._id }, process.env.jwt_secret);
-      const message = "Profile updated successfully";
-      res.send({ message, token: token });
-    } catch (err) {
-      console.log(err);
+    } else {
+      return res.status(404).json({ error: "No user found with the provided device ID" });
     }
-  });
+    await existingUser.save();
+    const token = jwt.sign({ _id: existingUser._id }, process.env.jwt_secret);
+    const message = "Profile updated successfully";
+    res.send({ message, token: token });
+  } catch (err) {
+    console.log(err);
+  }
+});
 //
-  router.post("/historydata-send", async (req, res) => {
-    const { v0, v1, v2, v3, timeStamp, deviceID } = req.body;    
-    if (!v0 || !v1 || !v2 || !v3 || !timeStamp || !deviceID) {
-      return res.status(422).json({ error: "Some Data Missing" });
-    }
-    const formattedData = {
-      v0: String(v0),
-      v1: String(v1),
-      v2: String(v2),
-      v3: String(v3),
-      timeStamp: String(timeStamp),
-      deviceID: String(deviceID)
-    };  
-    try {
-      const deviceData = new DeviceData(formattedData);
-      await deviceData.save();
-      const message = "Data saved successfully";
-      res.send({ message });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  });
-  
+router.post("/historydata-send", async (req, res) => {
+  const { v0, v1, v2, v3, timeStamp, deviceID } = req.body;
+  if (v0 === null || v0 === "" || v1 === null || v1 === "" || v2 === null || v2 === "" || v3 === null || v3 === "" || timeStamp === null || timeStamp === "" || deviceID === null || deviceID === "") {
+    return res.status(422).json({ error: "Some Data Missing" });
+  }
+  const formattedData = {
+    v0: String(v0),
+    v1: String(v1),
+    v2: String(v2),
+    v3: String(v3),
+    timeStamp: String(timeStamp),
+    deviceID: String(deviceID)
+  };
+  try {
+    const deviceData = new DeviceData(formattedData);
+    await deviceData.save();
+    const message = "Data saved successfully";
+    res.send({ message });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
-  router.get("/test", async (req, res) => {
-    res.send("This is test page");
-  });
 
-    
+router.get("/test", async (req, res) => {
+  res.send("This is test page");
+});
+
+
 module.exports = router;
