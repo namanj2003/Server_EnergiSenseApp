@@ -217,8 +217,8 @@ router.post("/forgot-password-check", async (req, res) => {
   });
 //
   router.post("/historydata-send", async (req, res) => {
-    const { v0, v1, v2, v3, v4, timeStamp, deviceID } = req.body;    
-    if (!v0 || !v1 || !v2 || !v3 || !v4 || !timeStamp || !deviceID) {
+    const { v0, v1, v2, v3, timeStamp, deviceID } = req.body;    
+    if (!v0 || !v1 || !v2 || !v3 || !timeStamp || !deviceID) {
       return res.status(422).json({ error: "Some Data Missing" });
     }
     const formattedData = {
@@ -226,7 +226,6 @@ router.post("/forgot-password-check", async (req, res) => {
       v1: String(v1),
       v2: String(v2),
       v3: String(v3),
-      v4: String(v4),
       timeStamp: String(timeStamp),
       deviceID: String(deviceID)
     };  

@@ -15,10 +15,6 @@ const deviceData = mongoose.Schema({
     v3: {
         type: String,
         required: true,
-    },
-    v4: {
-        type: String,
-        required: true,
     }, 
     timeStamp: {
         type: String,
