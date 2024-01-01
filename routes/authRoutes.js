@@ -215,21 +215,32 @@ router.post("/forgot-password-check", async (req, res) => {
       console.log(err);
     }
   });
-
+//
   router.post("/historydata-send", async (req, res) => {
-    const {v0,v1,v2,v3,v4,timeStamp,deviceID} = req.body;
-    if (v0 === null || v0 === "" || v1 === null || v1 === "" || v2 === null || v2 === "" || v3 === null || v3 === "" || v4 === null || v4 === "" || timeStamp === null || timeStamp === "" || deviceID === null || deviceID === "") {
+    const { v0, v1, v2, v3, v4, timeStamp, deviceID } = req.body;    
+    if (!v0 || !v1 || !v2 || !v3 || !v4 || !timeStamp || !deviceID) {
       return res.status(422).json({ error: "Some Data Missing" });
     }
+    const formattedData = {
+      v0: String(v0),
+      v1: String(v1),
+      v2: String(v2),
+      v3: String(v3),
+      v4: String(v4),
+      timeStamp: String(timeStamp),
+      deviceID: String(deviceID)
+    };  
     try {
-      const deviceData = new DeviceData({v0,v1,v2,v3,v4,timeStamp,deviceID});
+      const deviceData = new DeviceData(formattedData);
       await deviceData.save();
       const message = "Data saved successfully";
       res.send({ message });
     } catch (err) {
       console.log(err);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   });
+  
 
   router.get("/test", async (req, res) => {
     res.send("This is test page");
