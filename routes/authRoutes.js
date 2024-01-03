@@ -239,7 +239,23 @@ router.post("/historydata-send", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
+//
+router.get("/historydata-get", async (req, res) => {
+  const { deviceID } = req.query;
+  if (!deviceID) {
+    return res.status(422).send({ error: "You must provide a device id" });
+  }
+  try {
+    const deviceData = await DeviceData.find({ deviceID: deviceID });
+    if (!deviceData || deviceData.length === 0) {
+      return res.status(404).send({ error: "No documents found for this device ID" });
+    }
+    res.send(deviceData);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: "Server error" });
+  }
+});
 
 router.get("/test", async (req, res) => {
   res.send("This is test page");
