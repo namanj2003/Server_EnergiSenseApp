@@ -10,6 +10,7 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 //
 const bcrypt = require("bcrypt");
+const AuthTokenRequired = require("../Middleware/AuthTokenRequired");
 //
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -128,12 +129,9 @@ router.post("/login", async (req, res) => {
           name: savedUser.name,
           deviceID: savedUser.deviceID,
         };
-
-
         // console.log("Password matched");
         const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
         res.send({ token, apikey: userData });
-
       } else {
         // console.log("Password not matched");
         return res.status(422).json({ error: "Invalid Credentials" });
@@ -240,7 +238,7 @@ router.post("/historydata-send", async (req, res) => {
   }
 });
 //
-router.get("/historydata-get", async (req, res) => {
+router.get("/historydata-get", AuthTokenRequired, async (req, res) => {
   const { deviceID } = req.query;
   if (!deviceID) {
     return res.status(422).send({ error: "You must provide a device id" });
