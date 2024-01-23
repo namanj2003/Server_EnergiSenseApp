@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require('path');
 const router = express.Router();
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
@@ -254,7 +255,19 @@ router.get("/historydata-get", AuthTokenRequired, async (req, res) => {
     res.status(500).send({ error: "Server error" });
   }
 });
-
+//
+router.get('/avatar/:imageName', (req, res) => {
+  const imageName = req.params.imageName;
+  const imagePath = path.join(__dirname, '..', 'Avatars', imageName);
+  
+  res.sendFile(imagePath, err => {
+    if (err) {
+      console.error(err);
+      res.status(500).send({ error: "Server error" });
+    }
+  });
+});
+//
 router.get("/test", async (req, res) => {
   res.send("This is test page");
 });
