@@ -124,15 +124,19 @@ router.post("/login", async (req, res) => {
   }
   try {
     bcrypt.compare(password, savedUser.password, (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send({ error: "Server error" });
+      }
       if (result) {
         let userData = {
           email: savedUser.email,
-          name: savedUser.name,
+          name: JSON.parse(savedUser.name),
           deviceID: savedUser.deviceID,
         };
         console.log("Password matched");
         const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
-        res.send({ token, apikey: userData });
+        res.send({ token, apikey: userData, message: "Password matched" });
       } else {
         console.log("Password not matched");
         return res.status(422).send({ message: "Invalid Credentials" });
