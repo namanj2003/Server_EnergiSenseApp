@@ -125,7 +125,7 @@ router.post("/login", async (req, res) => {
   try {
     bcrypt.compare(password, savedUser.password, (err, result) => {
       if (err) {
-        console.error(err);
+        console.log("error@comparingPass: ", err);
         return res.status(500).send({ error: "Server error" });
       }
       if (result) {
