@@ -194,12 +194,19 @@ router.post("/change-password", async (req, res) => {
   if (!currentPassword || !newPassword) {
     return res.status(422).json({ error: "Please add all the fields" });
   }
-  const savedUser = await User.findOne ({ email: email });
+  if (newPassword.length < 8) {
+    return res.status(422).json({ error: "Password must be at least 8 characters long" });
+  }
+  const savedUser = await User.findOne({ email: email });
   if (!savedUser) {
     return res.status(422).json({ error: "User Not Found" });
   }
   try {
     bcrypt.compare(currentPassword, savedUser.password, async (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send({ error: "Server error" });
+      }
       if (result) {
         const hashedPassword = await bcrypt.hash(newPassword, 12);
         User.updateOne({ email: email }, { $set: { password: hashedPassword } }).then(async (result) => {
@@ -213,12 +220,12 @@ router.post("/change-password", async (req, res) => {
             }
             catch (err) {
               console.log(err);
-            }}
-            else {
-              return res.send({ message: "Current Password Incorrect" });
             }
-          });
-      } 
+          }
+        });
+      } else {
+        return res.status(401).send({ message: "Current Password is Incorrect" });
+      }
     });
   } catch (err) {
     console.log(err);
@@ -298,7 +305,7 @@ router.get("/historydata-get", AuthTokenRequired, async (req, res) => {
 router.get('/avatar/:imageName', (req, res) => {
   const imageName = req.params.imageName;
   const imagePath = path.join(__dirname, '..', 'Avatars', imageName);
-  
+
   res.sendFile(imagePath, err => {
     if (err) {
       console.error(err);
