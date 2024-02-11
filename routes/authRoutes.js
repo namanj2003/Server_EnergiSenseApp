@@ -130,12 +130,12 @@ router.post("/login", async (req, res) => {
           name: savedUser.name,
           deviceID: savedUser.deviceID,
         };
-        // console.log("Password matched");
+        console.log("Password matched");
         const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
         res.send({ token, apikey: userData });
       } else {
-        // console.log("Password not matched");
-        return res.status(422).json({ error: "Invalid Credentials" });
+        console.log("Password not matched");
+        return res.status(422).send({ message: "Invalid Credentials" });
       }
     });
   } catch (err) {
