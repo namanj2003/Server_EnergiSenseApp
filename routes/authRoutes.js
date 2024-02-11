@@ -189,6 +189,45 @@ router.post("/forgot-password-change", async (req, res) => {
   });
 });
 //
+router.post("/change-password", async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    return res.status(422).json({ error: "Please add all the fields" });
+  }
+  const savedUser = await User.findOne ({ email: email });
+  if (!savedUser) {
+    return res.status(422).json({ error: "User Not Found" });
+  }
+  try {
+    bcrypt.compare(currentPassword, savedUser.password, async (err, result) => {
+      if (result) {
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
+        User.updateOne({ email: email }, { $set: { password: hashedPassword } }).then(async (result) => {
+          if (result?.modifiedCount > 0) {
+            try {
+              const user = await User.findOne({ email: email });
+              const token = jwt.sign({ _id: user._id }, process.env.jwt_secret);
+              console.log("Password changed successfully");
+              console.log({ token });
+              res.send({ message: "Password changed successfully", token: token });
+            }
+            catch (err) {
+              console.log(err);
+            }}
+            else {
+              return res.send({ message: "Current Password Incorrect" });
+            }
+          });
+      } 
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+
+
+//
 router.post("/save-profile", async (req, res) => {
   const { name, email, deviceID } = req.body;
   if (!email || !name || !deviceID) {
