@@ -130,9 +130,9 @@ router.post("/login", async (req, res) => {
       }
       if (result) {
         let userData = {
-          email: savedUser.email,
-          name: JSON.parse(savedUser.name),
-          deviceID: savedUser.deviceID,
+          email: savedUser.email.toString(),
+          name: savedUser.name.toString(),
+          deviceID: savedUser.deviceID.toString(),
         };
         // console.log("Password matched");
         const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
