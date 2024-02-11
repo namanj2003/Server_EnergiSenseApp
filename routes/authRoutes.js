@@ -134,11 +134,11 @@ router.post("/login", async (req, res) => {
           name: JSON.parse(savedUser.name),
           deviceID: savedUser.deviceID,
         };
-        console.log("Password matched");
+        // console.log("Password matched");
         const token = jwt.sign({ _id: savedUser._id }, process.env.jwt_secret);
         res.send({ token, apikey: userData, message: "Password matched" });
       } else {
-        console.log("Password not matched");
+        // console.log("Password not matched");
         return res.status(422).send({ message: "Invalid Credentials" });
       }
     });
@@ -182,7 +182,7 @@ router.post("/forgot-password-change", async (req, res) => {
       try {
         const user = await User.findOne({ email: email });
         const token = jwt.sign({ _id: user._id }, process.env.jwt_secret);
-        console.log("Password changed successfully");
+        // console.log("Password changed successfully");
         console.log({ token });
         res.send({ message: "Password changed successfully", token: token });
       }
@@ -218,7 +218,7 @@ router.post("/change-password", async (req, res) => {
             try {
               const user = await User.findOne({ email: email });
               const token = jwt.sign({ _id: user._id }, process.env.jwt_secret);
-              console.log("Password changed successfully");
+              // console.log("Password changed successfully");
               console.log({ token });
               res.send({ message: "Password changed successfully", token: token });
             }
@@ -259,6 +259,7 @@ router.post("/save-profile", async (req, res) => {
     await existingUser.save();
     const token = jwt.sign({ _id: existingUser._id }, process.env.jwt_secret);
     const message = "Profile updated successfully";
+    // console.log(existingUser)
     res.send({ message, token: token });
   } catch (err) {
     console.log(err);
