@@ -5,26 +5,13 @@ const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const DeviceData = mongoose.model("DeviceData ");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
-
+const transporter = require("../emailAuth");
 //
 require("dotenv").config();
 //
 const bcrypt = require("bcrypt");
 const AuthTokenRequired = require("../Middleware/AuthTokenRequired");
 //
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // use SSL
-  requireTLS: true,
-  auth: {
-    user: "energisenseapp@gmail.com",
-    pass: "phheekefvoembptp",
-  },
-});
-
-// async..await is not allowed in global scope, must use a wrapper
 async function mailer(receiverEmail, code) {
   // send mail with defined transport object
   if (!receiverEmail) {
