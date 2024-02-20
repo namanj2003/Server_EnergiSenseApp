@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
   requireTLS: true,
   auth: {
     user: "energisenseapp@gmail.com",
-    pass: process.env.password,
+    pass: "tgfuqdgotbutduqb",
   },
 });
 
