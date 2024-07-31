@@ -13,17 +13,16 @@ const bcrypt = require("bcrypt");
 const AuthTokenRequired = require("../Middleware/AuthTokenRequired");
 //
 async function mailer(receiverEmail, code) {
-  // send mail with defined transport object
   if (!receiverEmail) {
     console.error("No receiver email defined");
     return;
   }
   let info = await transporter.sendMail({
-    from: '"EnergiSense Support" <energisenseapp@gmail.com>', // sender address
-    to: `${receiverEmail}`, // list of receivers
-    subject: "Signup Verification", // Subject line
-    text: `Your Verification Code is\n\n ${code}`, // plain text body
-    html: `<b>Your Verification Code is<br><br>${code}</b>`, // html body
+    from: '"EnergiSense Support" <energisenseapp@gmail.com>',
+    to: `${receiverEmail}`,
+    subject: "Signup Verification", 
+    text: `Your Verification Code is\n\n ${code}`, 
+    html: `<b>Your Verification Code is<br><br>${code}</b>`,
   });
   var currentdate = new Date();
   console.log("Message sent: %s", info.messageId);
@@ -34,17 +33,16 @@ mailer().catch(console.error);
 //
 
 async function forget(receiverEmail, code) {
-  // send mail with defined transport object
   if (!receiverEmail) {
     console.error("No receiver email defined");
     return;
   }
   let info = await transporter.sendMail({
-    from: '"EnergiSense Support" <energisenseapp@gmail.com>', // sender address
-    to: `${receiverEmail}`, // list of receivers
-    subject: "Reset Password", // Subject line
-    text: `Use the following verification code to reset your password\n\n ${code}`, // plain text body
-    html: `<b>Use the following verification code to reset your password<br><br>${code}</b>`, // html body
+    from: '"EnergiSense Support" <energisenseapp@gmail.com>',
+    to: `${receiverEmail}`,
+    subject: "Reset Password",
+    text: `Use the following verification code to reset your password\n\n ${code}`,
+    html: `<b>Use the following verification code to reset your password<br><br>${code}</b>`,
   });
   var currentdate = new Date();
   console.log("Message sent: %s", info.messageId);
@@ -54,8 +52,6 @@ async function forget(receiverEmail, code) {
 forget().catch(console.error);
 //
 router.post("/signup", async (req, res) => {
-  // res.send('This is signup page');
-  // console.log('Sent by Client - ', req.body);
   const { name, email, deviceID, password } = req.body;
   const user = new User({
     name,
@@ -74,7 +70,6 @@ router.post("/signup", async (req, res) => {
 );
 //
 router.post("/verify", async (req, res) => {
-  //   console.log("Sent by Client - ", req.body);
   const { name, email, deviceID, password } = req.body;
   if (!email || !password || !name || !deviceID) {
     return res.status(422).json({ error: "Please add all the fields" });
@@ -289,7 +284,7 @@ router.get("/historydata-get", AuthTokenRequired, async (req, res) => {
     }
     res.send(deviceData);
   } catch (err) {
-    console.error(err);
+    console.log(err);
     res.status(500).send({ error: "Server error" });
   }
 });
@@ -299,6 +294,16 @@ router.get('/avatar/:imageName', (req, res) => {
   const imagePath = path.join(__dirname, '..', 'Avatars', imageName);
 
   res.sendFile(imagePath, err => {
+    if (err) {
+      console.error(err);
+      res.status(500).send({ error: "Server error" });
+    }
+  });
+});
+//
+router.get('/download', (req, res) => {
+  const file = path.join(__dirname, '..', 'Apk', 'EnergiSense.apk');
+  res.download(file, (err) => {
     if (err) {
       console.error(err);
       res.status(500).send({ error: "Server error" });
