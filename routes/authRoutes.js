@@ -327,7 +327,7 @@ router.get('/upstox-redirect', (req, res) => {
   }
   
   // Send an empty response
-  res.status(204).send();
+  //res.status(204).send();
 });
 
 module.exports = router;
