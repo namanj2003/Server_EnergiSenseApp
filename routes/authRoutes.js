@@ -315,5 +315,15 @@ router.get("/test", async (req, res) => {
   res.send("This is test page");
 });
 
+// New route for Upstox API redirect
+router.get('/upstox-redirect', (req, res) => {
+  const { code, state } = req.query;
+  console.log(`Code: ${code}, State: ${state}`);
+  
+  // You can add your logic here to handle the code and state parameters
+  res.send("Redirect URL received");
+});
+
+
 
 module.exports = router;
