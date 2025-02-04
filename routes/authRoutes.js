@@ -322,12 +322,15 @@ router.get('/upstox-redirect', (req, res) => {
   const { code, state } = req.query;
   if (code && state) {
     console.log(`Code: ${code}, State: ${state}`);
-    res.send("Redirect URL received with code and state");
   } else {
     console.log('Code or state not received');
-    res.send("Redirect URL received but code or state is missing");
   }
+  
+  // Send an empty response
+  res.status(204).send();
 });
+
+module.exports = router;
 
 
 
