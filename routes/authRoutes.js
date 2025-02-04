@@ -317,11 +317,16 @@ router.get("/test", async (req, res) => {
 
 // New route for Upstox API redirect
 router.get('/upstox-redirect', (req, res) => {
-  const { code, state } = req.query;
-  console.log(`Code: ${code}, State: ${state}`);
+  console.log('Query parameters:', req.query);
   
-  // You can add your logic here to handle the code and state parameters
-  res.send("Redirect URL received");
+  const { code, state } = req.query;
+  if (code && state) {
+    console.log(`Code: ${code}, State: ${state}`);
+    res.send("Redirect URL received with code and state");
+  } else {
+    console.log('Code or state not received');
+    res.send("Redirect URL received but code or state is missing");
+  }
 });
 
 
