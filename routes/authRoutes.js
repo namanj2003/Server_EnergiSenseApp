@@ -330,6 +330,18 @@ router.get('/upstox-redirect', (req, res) => {
   //res.status(204).send();
 });
 
+// Route to serve the nse.json file
+router.get('/nse-json', (req, res) => {
+  const jsonFilePath = path.join(__dirname, '..', 'Files', 'NSE.json'); // Adjust the path as needed
+
+  res.sendFile(jsonFilePath, (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send({ error: "Unable to fetch the JSON file" });
+    }
+  });
+});
+
 module.exports = router;
 
 
