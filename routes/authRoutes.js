@@ -316,7 +316,7 @@ router.get("/test", async (req, res) => {
 });
 
 // New route for Upstox API redirect
-router.post('/upstox-redirect', (req, res) => {
+router.get('/upstox-redirect', (req, res) => {
   console.log('Query parameters:', req.query);
   
   const { code, state } = req.query;
